@@ -21,6 +21,8 @@ psycopg2-binary==2.9.9
 # -----------------------------
 python-dotenv==1.0.0
 flask-bcrypt
+bcrypt==4.1.2
+
 
 # -----------------------------
 # Machine Learning (MediPredict)
@@ -35,4 +37,5 @@ pickle-mixin==1.0.2
 pytest==7.4.3
 coverage
 typing_extensions==4.8.0
+MarkupSafe==2.1.3
 

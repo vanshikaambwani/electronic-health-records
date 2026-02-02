@@ -38,13 +38,17 @@
                 </tbody>
             </table>
         </div>
-        <a href="{{ url_for('edit_health_records') }}" class="btn btn-primary">Edit Health Records</a>
 
+<div class="mt-3 mb-4">
+    <a href="{{ url_for('edit_health_records') }}" class="btn btn-primary">
+        Edit Health Records
+    </a>
 
+    <a href="{{ url_for('ai_predictions') }}" class="btn btn-warning ms-2">
+        Run AI Health Prediction
+    </a>
+</div>
 
-<a href="{{ url_for('ai_predictions') }}" class="btn btn-warning ms-2">
-    Run AI Health Prediction
-</a>
 
 
 
