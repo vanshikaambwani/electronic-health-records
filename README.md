@@ -63,9 +63,13 @@ The architecture diagram for the app is shown below:
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 🧩 Installation
+### Requirements
+- Python 3.11
+- See `requirements.txt` for pinned dependencies
+
+### Installation
 
 Create a Conda environment:
 ```bash
@@ -89,7 +93,7 @@ python server.py
 
 ---
 
-## 🧪 Test Coverage
+## Test Coverage
 
 Run tests with coverage:
 ```bash
@@ -113,7 +117,7 @@ htmlcov/index.html
 
 ---
 
-## 🛠️ Technologies Used
+## Technologies Used
 - **Python**
 - **Flask**
 - **REST API**
@@ -125,7 +129,7 @@ htmlcov/index.html
 
 ---
 
-## 👥 Collaborators
+## Collaborators
 <body>
 <table>
   <tr>
