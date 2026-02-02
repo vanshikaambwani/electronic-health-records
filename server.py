@@ -12,6 +12,9 @@ from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from predictions.diabetes import predict_diabetes
 from predictions.heart import predict_heart
+from predictions.heart import predict_heart
+from predictions.parkinsons import predict_parkinsons
+from predictions.breast_cancer import predict_breast_cancer
 
 
 app = Flask(__name__)
@@ -66,6 +69,8 @@ def find_user_type(email):
     else:
         return "Patient"
 
+
+
 @app.route('/login', methods=['POST'])
 def login():
     """
@@ -99,6 +104,8 @@ def login():
     
     return render_template('login.html', error=error)
 
+
+
 @app.route('/logout')
 def logout():
     """
@@ -127,7 +134,9 @@ def register():
             return redirect(url_for('register_doctor'))
     return render_template('register.html')
 
+
 # # --------------------------------- Patient Components -------------------------------------------
+
 
 @app.route('/patient-dashboard')
 def patient_dashboard():
@@ -181,6 +190,98 @@ def diabetes_prediction():
         )
 
     return render_template('patients/diabetes_form.html')
+
+
+
+@app.route('/predict/heart', methods=['GET', 'POST'])
+def heart_prediction():
+    if 'auth' not in session or session['user_type'] != 'Patient':
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        result = predict_heart(
+            age=int(request.form['age']),
+            sex=int(request.form['sex']),
+            cp=int(request.form['cp']),
+            trestbps=int(request.form['trestbps']),
+            chol=int(request.form['chol']),
+            fbs=int(request.form['fbs']),
+            restecg=int(request.form['restecg']),
+            thalach=int(request.form['thalach']),
+            exang=int(request.form['exang']),
+            oldpeak=float(request.form['oldpeak']),
+            slope=int(request.form['slope']),
+            ca=int(request.form['ca']),
+            thal=int(request.form['thal'])
+        )
+
+        return render_template(
+            'patients/prediction_result.html',
+            disease="Heart Disease",
+            result=result
+        )
+
+    return render_template('patients/heart_form.html')
+
+
+
+
+@app.route('/predict/parkinsons', methods=['GET', 'POST'])
+def parkinsons_prediction():
+    if 'auth' not in session or session['user_type'] != 'Patient':
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        features = [
+            float(request.form[name]) for name in [
+ "Fo(Hz)", "Fhi(Hz)", "Flo(Hz)", "Jitter(%)", "Jitter(Abs)",
+ "RAP", "PPQ", "DDP", "Shimmer", "Shimmer(dB)",
+ "APQ3", "APQ5", "APQ", "DDA", "NHR",
+ "HNR", "RPDE", "DFA", "Spread1", "Spread2",
+ "D2", "PPE"
+]
+        ]
+
+        result = predict_parkinsons(features)
+
+        return render_template(
+            'patients/prediction_result.html',
+            disease="Parkinson’s Disease",
+            result=result
+        )
+
+    return render_template('patients/parkinsons_form.html')
+
+
+
+
+@app.route('/predict/breast-cancer', methods=['GET', 'POST'])
+def breast_cancer_prediction():
+    if 'auth' not in session or session['user_type'] != 'Patient':
+        return redirect(url_for('login'))
+
+    fields = [
+        "mean_radius", "mean_texture", "mean_perimeter", "mean_area",
+        "mean_smoothness", "mean_compactness", "mean_concavity", "mean_concave_points",
+        "mean_symmetry", "mean_fractal_dimension", "radius_error", "texture_error",
+        "perimeter_error", "area_error", "smoothness_error", "compactness_error",
+        "concavity_error", "concave_points_error", "symmetry_error", "fractal_dimension_error",
+        "worst_radius", "worst_texture", "worst_perimeter", "worst_area",
+        "worst_smoothness", "worst_compactness", "worst_concavity",
+        "worst_concave_points", "worst_symmetry", "worst_fractal_dimension"
+    ]
+
+    if request.method == 'POST':
+        features = [float(request.form[f]) for f in fields]
+        result = predict_breast_cancer(features)
+
+        return render_template(
+            'patients/prediction_result.html',
+            disease="Breast Cancer",
+            result=result
+        )
+
+    return render_template('patients/breast_cancer_form.html')
 
 
 

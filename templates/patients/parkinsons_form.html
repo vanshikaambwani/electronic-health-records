@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h2>Parkinson’s Disease Prediction</h2>
+
+<form method="POST">
+  <input name="fo" placeholder="Fo (Hz)" required>
+  <input name="fhi" placeholder="Fhi (Hz)" required>
+  <input name="flo" placeholder="Flo (Hz)" required>
+  <input name="jitter_pct" placeholder="Jitter (%)" required>
+  <input name="jitter_abs" placeholder="Jitter (Abs)" required>
+  <input name="rap" placeholder="RAP" required>
+  <input name="ppq" placeholder="PPQ" required>
+  <input name="ddp" placeholder="DDP" required>
+  <input name="shimmer" placeholder="Shimmer" required>
+  <input name="shimmer_db" placeholder="Shimmer (dB)" required>
+  <input name="apq3" placeholder="APQ3" required>
+  <input name="apq5" placeholder="APQ5" required>
+  <input name="apq" placeholder="APQ" required>
+  <input name="dda" placeholder="DDA" required>
+  <input name="nhr" placeholder="NHR" required>
+  <input name="hnr" placeholder="HNR" required>
+  <input name="rpde" placeholder="RPDE" required>
+  <input name="dfa" placeholder="DFA" required>
+  <input name="spread1" placeholder="Spread1" required>
+  <input name="spread2" placeholder="Spread2" required>
+  <input name="d2" placeholder="D2" required>
+  <input name="ppe" placeholder="PPE" required>
+
+  <button type="submit">Run Prediction</button>
+</form>
+
+{% endblock %}
+

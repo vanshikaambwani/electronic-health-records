@@ -3,13 +3,23 @@
 
 <h2>AI Health Predictions</h2>
 
-<a href="{{ url_for('diabetes_prediction') }}" class="btn btn-primary">
-  Diabetes Prediction
-</a>
+<div class="mt-3">
+  <a href="{{ url_for('diabetes_prediction') }}" class="btn btn-primary mb-2">
+    Diabetes Prediction
+  </a><br>
 
-<a href="#" class="btn btn-secondary disabled">
-  Heart Disease (Coming Next)
-</a>
+  <a href="{{ url_for('heart_prediction') }}" class="btn btn-danger mb-2">
+    Heart Disease Prediction
+  </a><br>
+
+  <a href="{{ url_for('parkinsons_prediction') }}" class="btn btn-warning mb-2">
+    Parkinson’s Disease Prediction
+  </a><br>
+
+  <a href="{{ url_for('breast_cancer_prediction') }}" class="btn btn-secondary mb-2">
+    Breast Cancer Prediction
+  </a>
+</div>
 
 {% endblock %}
 

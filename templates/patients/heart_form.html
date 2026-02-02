@@ -1,0 +1,25 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h2>Heart Disease Prediction</h2>
+
+<form method="POST">
+  <input name="age" placeholder="Age" required>
+  <input name="sex" placeholder="Sex (1 = Male, 0 = Female)" required>
+  <input name="cp" placeholder="Chest Pain Type" required>
+  <input name="trestbps" placeholder="Resting Blood Pressure" required>
+  <input name="chol" placeholder="Serum Cholesterol (mg/dl)" required>
+  <input name="fbs" placeholder="Fasting Blood Sugar > 120 (1=True)" required>
+  <input name="restecg" placeholder="Resting ECG Results" required>
+  <input name="thalach" placeholder="Max Heart Rate" required>
+  <input name="exang" placeholder="Exercise Induced Angina (1=Yes)" required>
+  <input name="oldpeak" placeholder="ST Depression" required>
+  <input name="slope" placeholder="Slope" required>
+  <input name="ca" placeholder="Major Vessels (0–3)" required>
+  <input name="thal" placeholder="Thal (1=Normal,2=Fixed,3=Reversible)" required>
+
+  <button type="submit">Run Prediction</button>
+</form>
+
+{% endblock %}
+

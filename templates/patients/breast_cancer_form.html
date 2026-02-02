@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block content %}
+
+<h2>Breast Cancer Prediction</h2>
+
+<form method="POST">
+{% for field in [
+"Mean Radius","Mean Texture","Mean Perimeter","Mean Area",
+"Mean Smoothness","Mean Compactness","Mean Concavity","Mean Concave Points",
+"Mean Symmetry","Mean Fractal Dimension","Radius Error","Texture Error",
+"Perimeter Error","Area Error","Smoothness Error","Compactness Error",
+"Concavity Error","Concave Points Error","Symmetry Error","Fractal Dimension Error",
+"Worst Radius","Worst Texture","Worst Perimeter","Worst Area",
+"Worst Smoothness","Worst Compactness","Worst Concavity",
+"Worst Concave Points","Worst Symmetry","Worst Fractal Dimension"
+] %}
+  <input name="{{ field|lower|replace(' ', '_') }}" placeholder="{{ field }}" required>
+{% endfor %}
+
+<button type="submit">Run Prediction</button>
+</form>
+
+{% endblock %}
+
