@@ -10,6 +10,9 @@ from models.reports import ReportFile
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
+from predictions.diabetes import predict_diabetes
+from predictions.heart import predict_heart
+
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
@@ -142,6 +145,43 @@ def patient_dashboard():
         return render_template('dashboard/patient_dashboard.html', patient_details=patient_details, appointments=appointments)
     else:
         return redirect(url_for('login'))
+
+
+
+
+@app.route('/ai-predictions')
+def ai_predictions():
+    if 'auth' in session and session['user_type'] == 'Patient':
+        return render_template('patients/ai_predictions.html')
+    return redirect(url_for('login'))
+
+
+
+
+@app.route('/predict/diabetes', methods=['GET', 'POST'])
+def diabetes_prediction():
+    if 'auth' not in session or session['user_type'] != 'Patient':
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        result = predict_diabetes(
+            pregnancies=int(request.form['pregnancies']),
+            glucose=float(request.form['glucose']),
+            blood_pressure=float(request.form['blood_pressure']),
+            skin_thickness=float(request.form['skin_thickness']),
+            insulin=float(request.form['insulin']),
+            bmi=float(request.form['bmi']),
+            dpf=float(request.form['dpf']),
+            age=int(request.form['age']),
+        )
+
+        return render_template(
+            'patients/diabetes_result.html',
+            result=result
+        )
+
+    return render_template('patients/diabetes_form.html')
+
 
 
 
