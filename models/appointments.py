@@ -12,22 +12,33 @@ class Appointment:
         self.setup_db()
 
     def setup_db(self):
-        self.cur.execute('CREATE TABLE IF NOT EXISTS appointment (apt_id TEXT PRIMARY KEY, patient_email TEXT, doctor_email TEXT, date TEXT, time TEXT, reason TEXT, prescription TEXT, status TEXT)')
+        self.cur.execute('CREATE TABLE IF NOT EXISTS appointment (apt_id TEXT PRIMARY KEY, patient_email TEXT, doctor_email TEXT, date TEXT, time TEXT, reason TEXT, prescription TEXT, status TEXT, attachment TEXT)')
         self.conn.commit()
+        
+        # Migrate existing tables to add attachment column if it doesn't exist
+        self.cur.execute("PRAGMA table_info(appointment)")
+        columns = [column[1] for column in self.cur.fetchall()]
+        if 'attachment' not in columns:
+            try:
+                self.cur.execute('ALTER TABLE appointment ADD COLUMN attachment TEXT')
+                self.conn.commit()
+            except sqlite3.OperationalError:
+                # Column already exists or other error, continue
+                pass
 
     def get_id(self):
         self.cur.execute('SELECT MAX(apt_id) FROM appointment;')
         result = self.cur.fetchone()[0]
         return str(int(result)+1) if result else 1
 
-    def create(self, patient_email, doctor_email, date, time, reason):
+    def create(self, patient_email, doctor_email, date, time, reason, attachment=None):
         apt_id = self.get_id()
         self.cur.execute('SELECT * FROM doctor_availability WHERE doctor_email = ? AND day = ? AND start_time = ?', (doctor_email, date, time))
         availaibility = self.cur.fetchone()
         if availaibility:
             # If no overlap, insert the appointment
             try:
-                self.cur.execute('INSERT INTO appointment VALUES (?,?,?,?,?,?,?,?)', (apt_id, patient_email, doctor_email, date, time, reason, "", "started"))
+                self.cur.execute('INSERT INTO appointment VALUES (?,?,?,?,?,?,?,?,?)', (apt_id, patient_email, doctor_email, date, time, reason, "", "started", attachment))
                 self.conn.commit()
             except:
                 raise Exception("Appointment can't be booked. Try again!")

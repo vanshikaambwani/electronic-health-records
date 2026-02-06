@@ -1,34 +1,49 @@
 {% extends "core/base.html" %}
-
-{% block title %}Patient Prescription{% endblock %}
+{% block title %}Digital Prescription{% endblock %}
 
 {% block content %}
-    <div class="container my-5">
-        <div>
-            <h1 class="display-4 fw-bold">Patient Prescription</h1>
-        </div>
-        {% if patient_info %}
-            {% if patient_info.status == 'completed' %}
-                <div class="card">
-                    <div class="card-body">
-                        <p class="card-text"><strong>Patient Name:</strong> {{ patient_info.patient_name }}</p>
-                        <p class="card-text"><strong>Doctor Name:</strong> {{ patient_info.doctor_name }}</p>
-                        <p class="card-text"><strong>Prescription:</strong> {{ patient_info.prescription }}</p>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="glass-card p-0 overflow-hidden">
+                <div class="bg-primary p-4 text-white d-flex justify-content-between align-items-center">
+                    <div>
+                        <h3 class="fw-bold m-0"><i class="bi bi-prescription fs-2 me-2"></i>Prescription</h3>
+                        <small class="opacity-75">LibreHealth Official Record</small>
+                    </div>
+                    <i class="bi bi-shield-check fs-1 opacity-50"></i>
+                </div>
+
+                <div class="p-5">
+                    {% if patient_info and patient_info.status == 'completed' %}
+                        <div class="mb-4 pb-4 border-bottom">
+                            <label class="small text-uppercase text-muted fw-bold">Patient</label>
+                            <p class="fs-4 fw-bold text-dark m-0">{{ patient_info.patient_name }}</p>
+                        </div>
+                        
+                        <div class="mb-4 pb-4 border-bottom">
+                            <label class="small text-uppercase text-muted fw-bold">Attending Physician</label>
+                            <p class="fs-5 text-dark m-0">Dr. {{ patient_info.doctor_name }}</p>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="small text-uppercase text-muted fw-bold mb-2">Rx Notes & Medication</label>
+                            <div class="p-4 bg-light rounded-3 border-start border-4 border-primary">
+                                <p class="m-0" style="font-family: 'Courier New', monospace; font-size: 1.1rem;">{{ patient_info.prescription }}</p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <p class="text-muted">No active prescription found for this visit.</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="text-center">
+                        <button onclick="window.history.back()" class="btn btn-outline-secondary rounded-pill px-4">Close View</button>
                     </div>
                 </div>
-            {% else %}
-                <p>No prescription available for the patient.</p>
-            {% endif %}
-        {% else %}
-            <p>No prescription available for the patient.</p>
-        {% endif %}
-        <div class="d-flex justify-content-end mt-3">
-            <button class="btn btn-primary" id="backButton">Back</button>
+            </div>
         </div>
     </div>
-    <script>
-        document.getElementById('backButton').addEventListener('click', function() {
-            window.history.back();
-        });
-    </script>
+</div>
 {% endblock %}

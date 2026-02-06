@@ -1,20 +1,52 @@
 {% extends "core/base.html" %}
 {% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 glass-card">
+            <div class="d-flex align-items-center mb-4 text-primary">
+                <i class="bi bi-droplet-fill fs-2 me-3"></i>
+                <h2 class="fw-bold m-0 text-dark">Diabetes Risk Assessment</h2>
+            </div>
+            
+            <form method="POST" class="row g-3">
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">Pregnancies</label>
+                    <input name="pregnancies" class="form-control" placeholder="e.g. 0" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">Glucose Level</label>
+                    <input name="glucose" class="form-control" placeholder="mg/dL" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">Blood Pressure</label>
+                    <input name="blood_pressure" class="form-control" placeholder="mm Hg" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">Skin Thickness</label>
+                    <input name="skin_thickness" class="form-control" placeholder="mm" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">Insulin Level</label>
+                    <input name="insulin" class="form-control" placeholder="mu U/ml" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">BMI</label>
+                    <input name="bmi" class="form-control" placeholder="Weight/Height²" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">Diabetes Pedigree (DPF)</label>
+                    <input name="dpf" class="form-control" placeholder="0.0 - 2.5" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="small fw-bold text-muted">Age</label>
+                    <input name="age" class="form-control" placeholder="Years" required>
+                </div>
 
-<h2>Diabetes Prediction</h2>
-
-<form method="POST">
-  <input name="pregnancies" placeholder="Pregnancies" required>
-  <input name="glucose" placeholder="Glucose Level" required>
-  <input name="blood_pressure" placeholder="Blood Pressure" required>
-  <input name="skin_thickness" placeholder="Skin Thickness" required>
-  <input name="insulin" placeholder="Insulin Level" required>
-  <input name="bmi" placeholder="BMI" required>
-  <input name="dpf" placeholder="Diabetes Pedigree Function" required>
-  <input name="age" placeholder="Age" required>
-
-  <button type="submit">Run Prediction</button>
-</form>
-
+                <div class="col-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-primary btn-lg px-5 rounded-pill shadow">Run AI Prediction Engine</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
-

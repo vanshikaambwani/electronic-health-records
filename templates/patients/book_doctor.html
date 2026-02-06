@@ -3,159 +3,326 @@
 {% block title %}Book Appointment{% endblock %}
 
 {% block content %}
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-
-    <div class="container my-5">
-        <div>
-            <h1 class="display-4 fw-bold">Book Doctor</h1>
+<div class="container my-5">
+    <div class="mb-5">
+        <div class="d-flex align-items-center mb-4">
+            <a href="{{ url_for('patient_dashboard') }}" class="btn btn-outline-secondary rounded-circle me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="display-5 fw-bold m-0">Book Appointment</h1>
+                <p class="text-muted mb-0">Schedule your visit with <strong>{{ doctor_name }}</strong></p>
+            </div>
         </div>
-  
+    </div>
 
-        <form method="post" action="{{ url_for('book_doctor', doctor_email=doctor_email, doctor_name=doctor_name) }}">
-            <div class="col-md-8">
-                <label for="doctor_name" class="sr-only">Doctor Name</label>
-                <div class="input-group mb-2">
-                    <span class="form-control">{{ doctor_name }}</span>
-                    <a href="{{ url_for('doctor_info', doctor_email=doctor_email) }}" class="btn btn-outline-secondary" type="button">View Profile</a>
-                </div>
-            </div>
-
-            <!-- <div class="col-md-8">
-                <h4>Doctor's Available Times</h4>
-            </div> -->
-
-            <!-- <div id='calendar'></div>  -->
-        
-            <div class="col-md-8">
-                <label for="date" class="form-label fs-5">Appointment Date</label>
-                <input type="date" class="form-control mb-2" id="date" name="date" required>
-            </div>
-
-            <!-- Display available time slots based on the selected date -->
-            <div id="available-times" class="col-md-8 mt-3">
-                <!-- Available times will be dynamically populated here -->
-            </div>
-        
-            <div class="col-md-8">
-                <label for="time" class="form-label fs-5">Appointment Time</label>
-                <input type="time" class="form-control mb-2" id="time" name="time" required>
-            </div>
-
-            <div class="col-md-8">
-                <label for="report" class="form-label fs-5">Share Existing Reports</label>
-                <div class="mb-2">
-                    {% for file in files %}
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" name="selected_reports" value="{{ file.report_name }}">
-                            <label class="form-check-label" for="report{{ file.report_name}}">
-                                {{ file.report_name }}
-                            </label>
+    <form method="post" action="{{ url_for('book_doctor', doctor_email=doctor_email, doctor_name=doctor_name) }}" enctype="multipart/form-data">
+        <div class="row g-4">
+            <!-- Left Column: Doctor Info & Date/Time Selection -->
+            <div class="col-lg-7">
+                <!-- Doctor Card -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="bg-primary text-white rounded-circle p-3 me-3 d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-0">{{ doctor_name }}</h5>
+                                <small class="text-muted">Specialist Doctor</small>
+                            </div>
                         </div>
-                    {% endfor %}
+                        <div class="pt-3 border-top">
+                            <a href="{{ url_for('doctor_info', doctor_email=doctor_email) }}" class="btn btn-sm btn-outline-primary w-100">
+                                <i class="bi bi-file-person me-2"></i>View Full Profile
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date & Time Selection -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white py-3">
+                        <h6 class="fw-bold m-0"><i class="bi bi-calendar-event me-2"></i>Select Date & Time</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="mb-4">
+                            <label for="date" class="form-label fw-bold">Choose Date</label>
+                            <input type="date" class="form-control form-control-lg" id="date" name="date" required>
+                            <small class="text-muted d-block mt-2">Select your preferred appointment date</small>
+                        </div>
+
+                        <!-- Available Times Display -->
+                        <div id="available-times" class="mb-4">
+                            <small class="text-muted">Select a date to see available time slots</small>
+                        </div>
+
+                        <div>
+                            <label for="time" class="form-label fw-bold">Select Time</label>
+                            <input type="time" class="form-control form-control-lg" id="time" name="time" required>
+                            <small class="text-muted d-block mt-2">You can also type the time directly</small>
+                        </div>
+                    </div>
                 </div>
             </div>
-        
-            <div class="col-md-8">
-                <label for="reason" class="form-label fs-5">Reason to Visit</label>
-                <textarea class="form-control mb-2" id="reason" name="reason" rows="3"></textarea>
-            </div> 
-        
-            <div class="col-md-8 d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary btn-lg">Book</button>
-                <!-- <button type="button" class="btn btn-secondary btn-lg ms-2" id="backButton">Back</button> -->
-                <a href="{{ url_for('patient_dashboard') }}" class="btn btn-secondary btn-lg ms-2">Back</a>
+
+            <!-- Right Column: Files & Reason -->
+            <div class="col-lg-5">
+                <!-- File Upload Section -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-success text-white py-3">
+                        <h6 class="fw-bold m-0"><i class="bi bi-file-earmark-pdf me-2"></i>Attach Files</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Your Previous Files -->
+                        {% if files %}
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Your Previous Files</label>
+                            <div class="d-flex flex-column gap-2">
+                                {% for file in files %}
+                                <div class="form-check p-3 border rounded" style="background-color: #f8f9fa;">
+                                    <input class="form-check-input" type="checkbox" name="selected_reports" value="{{ file.report_name }}" id="file_{{ file.report_name }}">
+                                    <label class="form-check-label ms-2" for="file_{{ file.report_name }}">
+                                        <i class="bi bi-file-earmark me-2 text-primary"></i>{{ file.report_name }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <hr class="my-3">
+                            <p class="text-muted small">OR</p>
+                            <hr class="my-3">
+                        </div>
+                        {% endif %}
+
+                        <!-- New File Upload -->
+                        <div>
+                            <label for="appointment_file" class="form-label fw-bold">Upload New File</label>
+                            <div class="border-2 border-dashed rounded-3 p-4 text-center" style="cursor: pointer;" id="dropZone">
+                                <i class="bi bi-cloud-arrow-up display-4 text-primary mb-3" style="display: block;"></i>
+                                <p class="fw-bold mb-1">Drop your file here</p>
+                                <p class="text-muted small mb-0">or click to browse</p>
+                                <input type="file" class="form-control d-none" id="appointment_file" name="appointment_file" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.txt,.xls,.xlsx">
+                            </div>
+                            <div id="fileNameDisplay" class="mt-2 alert alert-success d-none" role="alert">
+                                <i class="bi bi-check-circle me-2"></i><span id="fileName"></span>
+                            </div>
+                            <small class="text-muted d-block mt-2">Supported: PDF, DOC, DOCX, JPG, PNG, TXT, XLS, XLSX (Max 10MB)</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reason for Visit -->
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-info text-white py-3">
+                        <h6 class="fw-bold m-0"><i class="bi bi-chat-left-text me-2"></i>Reason for Visit</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <textarea class="form-control" id="reason" name="reason" rows="4" placeholder="Describe your symptoms, concerns, or reason for this appointment..." required></textarea>
+                        <small class="text-muted d-block mt-2">Provide details to help the doctor prepare for your visit</small>
+                    </div>
+                </div>
             </div>
-        </form>        
+        </div>
 
-
-        <div id="flash-messages">
-            {% for message in get_flashed_messages() %}
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+        <!-- Form Actions -->
+        <div class="row g-3 mt-4">
+            <div class="col-12">
+                <div class="d-flex gap-3 justify-content-end">
+                    <a href="{{ url_for('patient_dashboard') }}" class="btn btn-outline-secondary btn-lg px-5">
+                        <i class="bi bi-arrow-left me-2"></i>Back
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-check-circle me-2"></i>Book Appointment
                     </button>
                 </div>
-            {% endfor %}
+            </div>
         </div>
+    </form>
 
+    <!-- Flash Messages -->
+    <div id="flash-messages" class="position-fixed top-0 end-0 p-4" style="z-index: 1050;">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-success alert-dismissible fade show shadow-lg" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
     </div>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Handle change event on the date input
-            document.getElementById('date').addEventListener('input', function () {
-                var selectedDate = this.value;
-                var doctorEmail = "{{ doctor_email }}";
-                // Fetch available times based on the selected date from the Flask app
-                fetch(`/get_doctor_availability/${doctorEmail}?selected_date=${selectedDate}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Display the available times in the 'available-times' div
-                        displayAvailableTimes(data);
-                    });
-            });
-    
-            function displayAvailableTimes(availability) {
-                var availableTimesDiv = document.getElementById('available-times');
-                availableTimesDiv.innerHTML = '';
+</div>
 
-                if (availability.length === 0) {
-                    // If no availability, display a message
-                    var notAvailableMessage = document.createElement('div');
-                    notAvailableMessage.className = 'text-danger';
-                    notAvailableMessage.style.fontSize = '22px';
-                    notAvailableMessage.textContent = 'Not Available. Select another date.';
-                    availableTimesDiv.appendChild(notAvailableMessage);
-                } else {
-                    // Display each available time in a box
-                    var availableSlotsText = document.createElement('div');
-                    availableSlotsText.className = 'text-success';
-                    availableSlotsText.style.fontSize = '22px'; // Set the font size to 18px
-                    availableSlotsText.textContent = 'Available Slots:';
-                    availableTimesDiv.appendChild(availableSlotsText);
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // File upload drag and drop
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('appointment_file');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const fileNameSpan = document.getElementById('fileName');
 
-                    // Display each available time in a box with reduced width
-                    availability.forEach(function (timeSlot) {
-                        var startTime = formatTime(timeSlot.start_time);
-                        var endTime = formatTime(timeSlot.end_time);
+        dropZone.addEventListener('click', () => fileInput.click());
+        
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '#e7f3ff';
+            dropZone.style.borderColor = '#0d6efd';
+        });
 
-                        var timeSlotBox = document.createElement('div');
-                        timeSlotBox.className = 'border p-1 m-2';
-                        timeSlotBox.style.backgroundColor = 'lightgreen';
-                        timeSlotBox.style.width = '180px'; 
-                        timeSlotBox.style.textAlign = 'center';
-                        timeSlotBox.textContent = `${startTime} - ${endTime}`;
-                        availableTimesDiv.appendChild(timeSlotBox);
-                    });
-                }
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.backgroundColor = '';
+            dropZone.style.borderColor = '';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '';
+            dropZone.style.borderColor = '';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                updateFileDisplay(files[0].name);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                updateFileDisplay(e.target.files[0].name);
+            }
+        });
+
+        function updateFileDisplay(fileName) {
+            fileNameSpan.textContent = fileName;
+            fileNameDisplay.classList.remove('d-none');
+        }
+
+        // Handle date selection and fetch available slots
+        document.getElementById('date').addEventListener('input', function () {
+            var selectedDate = this.value;
+            var doctorEmail = "{{ doctor_email }}";
+            
+            if (!selectedDate) {
+                document.getElementById('available-times').innerHTML = '<small class="text-muted">Select a date to see available time slots</small>';
+                return;
             }
 
-            function formatTime(time) {
-                // Format time to include AM/PM
-                var formattedTime = new Date('2022-01-01T' + time);
-                return formattedTime.toLocaleString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+            // Fetch available times based on the selected date
+            fetch(`/get_doctor_availability/${doctorEmail}?selected_date=${selectedDate}`)
+                .then(response => response.json())
+                .then(data => {
+                    displayAvailableTimes(data, selectedDate);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('available-times').innerHTML = '<div class="alert alert-warning">Unable to load available slots</div>';
+                });
+        });
+
+        function displayAvailableTimes(availability) {
+            var availableTimesDiv = document.getElementById('available-times');
+            availableTimesDiv.innerHTML = '';
+
+            if (!availability || availability.length === 0) {
+                availableTimesDiv.innerHTML = `
+                    <div class="alert alert-warning d-flex align-items-center" role="alert">
+                        <i class="bi bi-exclamation-circle me-2"></i>
+                        <span>No available slots on this date. Please select another date.</span>
+                    </div>
+                `;
+            } else {
+                let html = `
+                    <label class="form-label fw-bold text-success">
+                        <i class="bi bi-calendar-check me-2"></i>Available Slots: ${availability.length} found
+                    </label>
+                    <div class="d-flex flex-wrap gap-2">
+                `;
+
+                availability.forEach(function (slot) {
+                    var startTime = formatTime(slot.start_time);
+                    var endTime = formatTime(slot.end_time);
+
+                    html += `
+                        <button type="button" class="btn btn-outline-success slot-btn" data-time="${slot.start_time}" style="font-size: 0.85rem;">
+                            <i class="bi bi-clock me-1"></i>${startTime}<br><small>${endTime}</small>
+                        </button>
+                    `;
+                });
+
+                html += '</div>';
+                availableTimesDiv.innerHTML = html;
+
+                // Add click listeners to slot buttons
+                document.querySelectorAll('.slot-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const time = btn.getAttribute('data-time');
+                        document.getElementById('time').value = time;
+                        
+                        // Update button styles
+                        document.querySelectorAll('.slot-btn').forEach(b => b.classList.remove('btn-success'));
+                        btn.classList.add('btn-success');
+                    });
+                });
             }
+        }
 
+        function formatTime(time) {
+            // Format time to include AM/PM
+            var parts = time.split(':');
+            var hour = parseInt(parts[0]);
+            var minute = parts[1];
+            var ampm = hour >= 12 ? 'PM' : 'AM';
+            hour = hour % 12;
+            hour = hour ? hour : 12;
+            return hour + ':' + minute + ' ' + ampm;
+        }
+    });
+
+    // Auto-close flash messages after 5 seconds
+    setTimeout(function() {
+        document.querySelectorAll('#flash-messages .alert').forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
         });
-    </script>
-    
-    
-    
-       
+    }, 5000);
+</script>
 
-    <!-- Custom script to auto-close flash messages after a few seconds -->
-    <script>
-        // Auto-close flash messages after 5 seconds
-        setTimeout(function() {
-            $('#flash-messages .alert').alert('close');
-        }, 5000);
-    </script>
+<style>
+    .border-2 {
+        border-width: 2px !important;
+    }
 
+    .border-dashed {
+        border-style: dashed !important;
+    }
 
-    <!-- <script>
-        document.getElementById('backButton').addEventListener('click', function() {
-            window.history.back();
-        });
-    </script> -->
+    .slot-btn {
+        min-width: 110px;
+        transition: all 0.3s ease;
+    }
+
+    .slot-btn:hover {
+        background-color: #d4edda;
+        border-color: #28a745;
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
+    }
+
+    .card {
+        transition: box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+    }
+
+    #dropZone {
+        transition: all 0.3s ease;
+    }
+
+    #dropZone:hover {
+        background-color: #f0f8ff;
+        border-color: #0d6efd;
+    }
+</style>
 {% endblock %}

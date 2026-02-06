@@ -113,6 +113,7 @@ class Doctor:
             result['reason'] = appointment[5]
             result['prescription'] = appointment[6]
             result['status'] = appointment[7]
+            result['attachment'] = appointment[8] if len(appointment) > 8 else None
             appointments.append(result)
 
         return appointments
@@ -199,3 +200,24 @@ class Doctor:
     def deletedoctoravailability(self, doctor_email, day, start_time):
         self.cur.execute('DELETE FROM doctor_availability WHERE doctor_email=? and day=? and start_time=?', (doctor_email, day, start_time))
         self.conn.commit()
+
+    def get_doctors_by_specialization(self, specialization):
+        """Get all doctors with a specific specialization"""
+        try:
+            self.cur.execute('SELECT * FROM doctors WHERE specialization=?', (specialization,))
+            rows = self.cur.fetchall()
+            if rows:
+                final = []
+                for doctor_data in rows:
+                    result = {}
+                    result['name'] = doctor_data[2]
+                    result['email'] = doctor_data[0]
+                    result['specialization'] = doctor_data[3]
+                    result['experience'] = doctor_data[4]
+                    final.append(result)
+                return final
+            else:
+                return []
+        except sqlite3.Error as error:
+            print(error)
+            return []

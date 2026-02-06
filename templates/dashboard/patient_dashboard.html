@@ -1,160 +1,168 @@
 {% extends "core/base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Patient Portal{% endblock %}
 
 {% block content %}
-    <div class="container my-5">
+<div class="container-fluid bg-light min-vh-100 py-4 px-lg-5">
+    
+    <div class="d-flex justify-content-between align-items-end mb-5 border-bottom pb-4">
         <div>
-            <h1 class="display-4 fw-bold">Hi, {{ patient_details.first_name }} {{ patient_details.last_name }}</h1>
+            <h6 class="text-uppercase text-muted fw-bold small mb-1">Patient Record #{{ patient_details.id if patient_details.id else 'GEN-001' }}</h6>
+            <h1 class="fw-bold text-dark mb-0">{{ patient_details.first_name }} {{ patient_details.last_name }}</h1>
         </div>
-
-        <div class="patient-details-table">
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <td class="dark-grey"><b>Email:</b></td>
-                        <td class="light-green">{{ patient_details.email }}</td>
-                    </tr>
-                    <tr>
-                        <td class="dark-grey"><b>Age:</b></td>
-                        <td class="light-green">{{ patient_details.age }}</td>
-                    </tr>
-                    <tr>
-                        <td class="dark-grey"><b>Weight:</b></td>
-                        <td class="light-green">{{ patient_details.weight }} lbs</td>
-                    </tr>
-                    <tr>
-                        <td class="dark-grey"><b>Height:</b></td>
-                        <td class="light-green">{{ patient_details.height }} cm</td>
-                    </tr>
-                    <tr>
-                        <td class="dark-grey"><b>Gender:</b></td>
-                        <td class="light-green">{{ patient_details.gender }}</td>
-                    </tr>
-                    <tr>
-                        <td class="dark-grey"><b>Medical History:</b></td>
-                        <td class="light-green">{{ patient_details.medical_history }}</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('ai_predictions') }}" class="btn btn-outline-dark rounded-0 px-4">
+                <i class="bi bi-cpu me-2"></i>AI Diagnostics
+            </a>
+            <a href="{{ url_for('edit_health_records') }}" class="btn btn-dark rounded-0 px-4">
+                <i class="bi bi-pencil me-2"></i>Update Profile
+            </a>
         </div>
-
-<div class="mt-3 mb-4">
-    <a href="{{ url_for('edit_health_records') }}" class="btn btn-primary">
-        Edit Health Records
-    </a>
-
-    <a href="{{ url_for('ai_predictions') }}" class="btn btn-warning ms-2">
-        Run AI Health Prediction
-    </a>
-</div>
-
-
-
-
-        <!-- ----------------------------------Appointments Dashboard---------------------------------- -->
-
-        <div class="appointments-section">
-            <h2 class="mt-4">Pending Approvals:</h2>
-            {% if appointments|selectattr('status', 'equalto', 'started')|list %}
-                <div class="table-responsive-sm">
-                    <table class="table">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="row" style="width: 30%;">Doctor Name</th>
-                                <th scope="row" style="width: 20%;">Date</th>
-                                <th scope="row" style="width: 20%;">Time</th>
-                                <th scope="row" style="width: 30%;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for appointment in appointments %}
-                                {% if appointment.status == 'started' %}
-                                    <tr>
-                                        <td style="width: 30%;">{{ appointment.doctor_name }}</td>
-                                        <td style="width: 20%;">{{ appointment.date }}</td>
-                                        <td style="width: 20%;">{{ appointment.time }}</td>
-                                        <td style="width: 30%;">
-                                            <a href="{{ url_for('edit_appointment', doctor_email=appointment.doctor_email) }}" class="btn btn-primary btn-sm">Edit</a>
-                                            <span style="margin-right: 10px;"></span>
-                                            <a href="{{ url_for('cancel_appointment', doctor_email=appointment.doctor_email, action='cancel') }}" class="btn btn-danger btn-sm">Cancel</a>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p>No upcoming appointments.</p>
-            {% endif %}
-        </div>
-
-        <div class="appointments-section">
-            <h2 class="mt-4">Upcoming Appointments:</h2>
-            {% if appointments|selectattr('status', 'equalto', 'inprogress')|list %}
-                <div class="table-responsive-sm">
-                    <table class="table">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="row" style="width: 30%;">Doctor Name</th>
-                                <th scope="row" style="width: 20%;">Date</th>
-                                <th scope="row" style="width: 20%;">Time</th>
-                                <th scope="row" style="width: 30%;">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for appointment in appointments %}
-                                {% if appointment.status == 'inprogress' %}
-                                    <tr>
-                                        <td style="width: 30%;">{{ appointment.doctor_name }}</td>
-                                        <td style="width: 20%;">{{ appointment.date }}</td>
-                                        <td style="width: 20%;">{{ appointment.time }}</td>
-                                        <td style="width: 30%;">
-                                            <a href="{{ url_for('doctor_info', doctor_email=appointment.doctor_email) }}" class="btn btn-primary btn-sm">View Profile</a>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p>No upcoming appointments.</p>
-            {% endif %}
-        </div>
-
-        <div class="appointments-section">
-            <h2 class="mt-4">Completed Appointments:</h2>
-            {% if appointments|selectattr('status', 'equalto', 'completed')|list %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th style="width: 30%;">Doctor Name</th>
-                            <th style="width: 30%;">Prescription</th>
-                            <th style="width: 30%;">Profile</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for appointment in appointments %}
-                            {% if appointment.status == 'completed' %}
-                                <tr>
-                                    <td>{{ appointment.doctor_name }}</td>
-                                    <td>
-                                        <a href="{{ url_for('patient_prescription', doctor_email=appointment.doctor_email) }}" class="btn btn-primary btn-sm">View Prescription</a>
-                                    </td>
-                                    <td>
-                                        <a href="{{ url_for('doctor_info', doctor_email=appointment.doctor_email) }}" class="btn btn-primary btn-sm">View Profile</a>
-                                    </td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No past appointments.</p>
-            {% endif %}
-        </div>
-        
     </div>
+
+    <div class="row g-4">
+        <div class="col-lg-3">
+            <div class="card border-0 shadow-sm rounded-0 mb-4">
+                <div class="card-header bg-white fw-bold py-3 border-bottom">
+                    CLINICAL VITALS
+                </div>
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-muted small text-uppercase fw-bold">Age</span>
+                        <span class="fw-bold text-dark">{{ patient_details.age }} yrs</span>
+                    </div>
+                    <div class="list-group-item py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-muted small text-uppercase fw-bold">Weight</span>
+                        <div>
+                            <span class="fw-bold text-dark">{{ patient_details.weight }}</span>
+                            <span class="text-muted small">lbs</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3 d-flex justify-content-between align-items-center">
+                        <span class="text-muted small text-uppercase fw-bold">Height</span>
+                        <div>
+                            <span class="fw-bold text-dark">{{ patient_details.height }}</span>
+                            <span class="text-muted small">cm</span>
+                        </div>
+                    </div>
+                    <div class="list-group-item py-3 d-flex justify-content-between align-items-center bg-light">
+                        <span class="text-muted small text-uppercase fw-bold">Gender</span>
+                        <span class="badge bg-secondary text-white rounded-0">{{ patient_details.gender }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm rounded-0">
+                <div class="card-body">
+                    <h6 class="text-muted text-uppercase fw-bold small mb-3">Medical History</h6>
+                    <p class="small text-secondary mb-0" style="line-height: 1.6;">
+                        {{ patient_details.medical_history if patient_details.medical_history else 'No significant history recorded.' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            
+            {% set pending_list = appointments|selectattr('status', 'equalto', 'started')|list %}
+            {% if pending_list %}
+            <div class="card border-warning border-start-4 border-0 shadow-sm rounded-0 mb-4">
+                <div class="card-body d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-10 text-warning p-2 rounded me-3">
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">Pending Approvals</h6>
+                            <small class="text-muted">You have {{ pending_list|length }} appointment request(s) waiting for doctor confirmation.</small>
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            Manage
+                        </button>
+                        <ul class="dropdown-menu shadow border-0">
+                            {% for appt in pending_list %}
+                            <li><h6 class="dropdown-header">{{ appt.doctor_name }} - {{ appt.date }}</h6></li>
+                            <li><a class="dropdown-item small" href="{{ url_for('edit_appointment', doctor_email=appt.doctor_email) }}">Reschedule</a></li>
+                            <li><a class="dropdown-item small text-danger" href="{{ url_for('cancel_appointment', doctor_email=appt.doctor_email, action='cancel') }}">Cancel Request</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="card border-0 shadow-sm rounded-0 mb-4">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold m-0 text-uppercase tracking-wide text-dark">Schedule & Visits</h6>
+                    <a href="{{ url_for('book_appointment') }}" class="btn btn-sm btn-primary rounded-0">
+                        <i class="bi bi-plus-lg"></i> New Appointment
+                    </a>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0" style="font-size: 0.95rem;">
+                        <thead class="bg-light border-bottom">
+                            <tr>
+                                <th class="ps-4 py-3 text-muted text-uppercase fw-bold small" style="width: 25%">Doctor / Specialist</th>
+                                <th class="py-3 text-muted text-uppercase fw-bold small" style="width: 20%">Date & Time</th>
+                                <th class="py-3 text-muted text-uppercase fw-bold small" style="width: 15%">Status</th>
+                                <th class="pe-4 py-3 text-end text-muted text-uppercase fw-bold small">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments if appt.status == 'inprogress' %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold text-dark">{{ appt.doctor_name }}</div>
+                                    <a href="{{ url_for('doctor_info', doctor_email=appt.doctor_email) }}" class="small text-muted text-decoration-none">View Profile</a>
+                                </td>
+                                <td>
+                                    <div class="text-dark fw-medium">{{ appt.date }}</div>
+                                    <small class="text-primary">{{ appt.time }}</small>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary bg-opacity-10 text-dark border border-primary rounded-pill px-3 fw-semibold">Confirmed</span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <button class="btn btn-sm btn-light border" disabled>Check-in Available 24h Prior</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            {% for appt in appointments if appt.status == 'completed' %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="text-secondary">{{ appt.doctor_name }}</div>
+                                </td>
+                                <td>
+                                    <div class="text-muted">{{ appt.date }}</div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-3">Completed</span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <a href="{{ url_for('patient_prescription', doctor_email=appt.doctor_email) }}" class="btn btn-sm btn-link text-decoration-none fw-bold">
+                                        <i class="bi bi-file-text me-1"></i>Rx Summary
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+
+                            {% if not appointments %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    No appointment records found.
+                                </td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
 {% endblock %}

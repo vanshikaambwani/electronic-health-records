@@ -184,9 +184,13 @@ def diabetes_prediction():
             age=int(request.form['age']),
         )
 
+        # Get doctors who specialize in Diabetes
+        doctors = Doctor().get_doctors_by_specialization('Diabetes')
+
         return render_template(
             'patients/diabetes_result.html',
-            result=result
+            result=result,
+            doctors=doctors
         )
 
     return render_template('patients/diabetes_form.html')
@@ -215,10 +219,14 @@ def heart_prediction():
             thal=int(request.form['thal'])
         )
 
+        # Get doctors who specialize in Cardiology
+        doctors = Doctor().get_doctors_by_specialization('Cardiology')
+
         return render_template(
             'patients/prediction_result.html',
             disease="Heart Disease",
-            result=result
+            result=result,
+            doctors=doctors
         )
 
     return render_template('patients/heart_form.html')
@@ -244,10 +252,14 @@ def parkinsons_prediction():
 
         result = predict_parkinsons(features)
 
+        # Get doctors who specialize in Neurology
+        doctors = Doctor().get_doctors_by_specialization('Neurology')
+
         return render_template(
             'patients/prediction_result.html',
-            disease="Parkinson’s Disease",
-            result=result
+            disease="Parkinson's Disease",
+            result=result,
+            doctors=doctors
         )
 
     return render_template('patients/parkinsons_form.html')
@@ -275,10 +287,14 @@ def breast_cancer_prediction():
         features = [float(request.form[f]) for f in fields]
         result = predict_breast_cancer(features)
 
+        # Get doctors who specialize in Oncology
+        doctors = Doctor().get_doctors_by_specialization('Oncology')
+
         return render_template(
             'patients/prediction_result.html',
             disease="Breast Cancer",
-            result=result
+            result=result,
+            doctors=doctors
         )
 
     return render_template('patients/breast_cancer_form.html')
@@ -384,6 +400,28 @@ def book_doctor(doctor_email, doctor_name):
             time = request.form.get('time')
             reason = request.form.get('reason')
 
+            # Validate required fields
+            if not date or not time or not reason:
+                flash('Please fill in all required fields.', 'failure')
+                return redirect(url_for('book_doctor', doctor_email=doctor_email, doctor_name=doctor_name))
+
+            # Handle file upload
+            attachment_path = None
+            if 'appointment_file' in request.files:
+                file = request.files['appointment_file']
+                if file and file.filename != '':
+                    try:
+                        # Add timestamp to filename to avoid conflicts
+                        secure_name = secure_filename(file.filename)
+                        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_')
+                        unique_filename = timestamp + secure_name
+                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
+                        file.save(file_path)
+                        attachment_path = file_path
+                    except Exception as error:
+                        flash(f'File upload failed: {str(error)}', 'failure')
+                        return redirect(url_for('book_doctor', doctor_email=doctor_email, doctor_name=doctor_name))
+
             selected_reports = request.form.getlist('selected_reports')
             if selected_reports:
                 try:
@@ -393,18 +431,24 @@ def book_doctor(doctor_email, doctor_name):
                     flash('Failed to associate reports with the appointment. Try again!', 'failure')
 
             try:
-                Appointment().create(patient_email, doctor_email, date, time, reason)
+                Appointment().create(patient_email, doctor_email, date, time, reason, attachment_path)
                 flash('Appointment created successfully!', 'success')
+                return redirect(url_for('patient_dashboard'))
             except sqlite3.Error as error:
                 if 'UNIQUE constraint failed' in str(error):
                     flash('Appointment can\'t be booked. Try again!', 'failure')
+                else:
+                    flash(f'Error: {str(error)}', 'failure')
             except Exception as error:
                 flash(str(error), 'failure')
 
+    # Get patient's files for display
     files = []
     if 'auth' in session:
         patient_email = session['auth']
         files = Patient().getpatientreports(pat_email=patient_email)
+    else:
+        return redirect(url_for('index'))
 
     return render_template('patients/book_doctor.html', doctor_email=doctor_email, doctor_name=doctor_name, files=files)
 
@@ -482,28 +526,38 @@ def upload_reports():
     Handle the uploading of medical reports by patients.
 
     Returns:
-        Flask Response: Redirects to the patient dashboard after handling the upload.
+        Flask Response: Renders upload page with previous reports, or redirects after upload.
     """
+    if 'auth' not in session:
+        return redirect(url_for('index'))
+    
+    patient_email = session['auth']
+    
     if request.method == 'POST':
-        if 'auth' in session:
-            patient_email = session['auth']
+        # Check if file exists in the request
+        if 'file' not in request.files:
+            flash('No file selected. Please choose a file to upload.', 'failure')
+        else:
             file = request.files['file']
-            name = request.form['report_name']
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
-            file.save(file_path)
-
-            try:
-                ReportFile().create(patient_email=patient_email, doctor_email=None, report_name=name, file_path=file_path)
-                flash('Reports were uploaded!', 'success')
-            except sqlite3.Error as error:
-                flash('Reports were not uploaded. Try again!', 'failue')
-    else:
-        if 'auth' in session:
-            patient_email = session['auth']
-            reports = Patient().getpatientreports(pat_email=patient_email)
-            return render_template('patients/upload_reports.html', files=reports)
-        
-    return redirect(url_for('patient_dashboard'))
+            name = request.form.get('report_name', '').strip()
+            
+            # Check if file has a filename
+            if file.filename == '':
+                flash('No file selected. Please choose a file to upload.', 'failure')
+            elif not name:
+                flash('Report name is required.', 'failure')
+            else:
+                try:
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
+                    file.save(file_path)
+                    ReportFile().create(patient_email=patient_email, doctor_email=None, report_name=name, file_path=file_path)
+                    flash('Report uploaded successfully!', 'success')
+                except Exception as error:
+                    flash(f'Report upload failed. Try again! Error: {str(error)}', 'failure')
+    
+    # Always show the upload page with previous reports
+    reports = Patient().getpatientreports(pat_email=patient_email)
+    return render_template('patients/upload_reports.html', files=reports)
         
 @app.route('/serve-report/<path:file_path>')
 def serve_report(file_path):
@@ -520,6 +574,22 @@ def serve_report(file_path):
         return send_from_directory(app.config['UPLOAD_FOLDER'], os.path.basename(file_path), as_attachment=False)
     
     return redirect(url_for('upload_reports'))
+
+@app.route('/download-appointment-file/<path:file_path>')
+def download_appointment_file(file_path):
+    """
+    Download an appointment attachment file.
+
+    Args:
+        file_path (str): Path to the attachment file.
+
+    Returns:
+        Flask Response: Serves the attachment file for download.
+    """
+    if 'auth' in session:
+        return send_from_directory(app.config['UPLOAD_FOLDER'], os.path.basename(file_path), as_attachment=True)
+    
+    return redirect(url_for('index'))
 
 @app.route('/delete-report/<path:report_name>', methods=['POST'])
 def delete_report(report_name):
@@ -550,22 +620,32 @@ def get_doctor_availability(doctor_email):
         doctor_email (str): Email of the doctor.
 
     Returns:
-        JSON Response: Availability information in FullCalendar event format.
+        JSON Response: Availability information.
     """
-    selected_date = request.args.get('selected_date')
+    try:
+        selected_date = request.args.get('selected_date')
+        
+        if not selected_date:
+            return jsonify([])
 
-    # Fetch the availability from the database for the selected date
-    availability = Doctor().getavailabilityfordate(doctor_email, selected_date)
+        # Fetch the availability from the database for the selected date
+        availability = Doctor().getavailabilityfordate(doctor_email, selected_date)
 
-    # Convert to FullCalendar event format
-    events = [
-        {
-            'start_time': f"{start_time}",
-            'end_time': f"{end_time}",
-        } for date, start_time, end_time in availability
-    ]
+        # Convert to proper event format
+        events = []
+        for availability_row in availability:
+            # availability_row should be (day, start_time, end_time)
+            if len(availability_row) >= 3:
+                events.append({
+                    'start_time': availability_row[1],
+                    'end_time': availability_row[2],
+                })
 
-    return jsonify(events)
+        return jsonify(events)
+    except Exception as e:
+        print(f"Error fetching availability: {e}")
+        return jsonify([])
+
 # # --------------------------------- Doctor Components -------------------------------------------
 
 

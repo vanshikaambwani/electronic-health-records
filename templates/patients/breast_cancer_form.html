@@ -1,24 +1,35 @@
 {% extends "core/base.html" %}
 {% block content %}
+<div class="container py-5">
+    <div class="glass-card">
+        <div class="mb-4 border-bottom pb-3">
+            <h2 class="fw-bold text-secondary">Breast Cancer Analysis</h2>
+            <p class="text-muted m-0">Enter cell nuclei characteristics for prediction.</p>
+        </div>
+        
+        <form method="POST">
+            <div class="row g-3">
+                {% for field in [
+                "Mean Radius","Mean Texture","Mean Perimeter","Mean Area",
+                "Mean Smoothness","Mean Compactness","Mean Concavity","Mean Concave Points",
+                "Mean Symmetry","Mean Fractal Dimension","Radius Error","Texture Error",
+                "Perimeter Error","Area Error","Smoothness Error","Compactness Error",
+                "Concavity Error","Concave Points Error","Symmetry Error","Fractal Dimension Error",
+                "Worst Radius","Worst Texture","Worst Perimeter","Worst Area",
+                "Worst Smoothness","Worst Compactness","Worst Concavity",
+                "Worst Concave Points","Worst Symmetry","Worst Fractal Dimension"
+                ] %}
+                <div class="col-md-4 col-lg-3">
+                    <label class="form-label small text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">{{ field }}</label>
+                    <input name="{{ field|lower|replace(' ', '_') }}" class="form-control form-control-sm" required>
+                </div>
+                {% endfor %}
+            </div>
 
-<h2>Breast Cancer Prediction</h2>
-
-<form method="POST">
-{% for field in [
-"Mean Radius","Mean Texture","Mean Perimeter","Mean Area",
-"Mean Smoothness","Mean Compactness","Mean Concavity","Mean Concave Points",
-"Mean Symmetry","Mean Fractal Dimension","Radius Error","Texture Error",
-"Perimeter Error","Area Error","Smoothness Error","Compactness Error",
-"Concavity Error","Concave Points Error","Symmetry Error","Fractal Dimension Error",
-"Worst Radius","Worst Texture","Worst Perimeter","Worst Area",
-"Worst Smoothness","Worst Compactness","Worst Concavity",
-"Worst Concave Points","Worst Symmetry","Worst Fractal Dimension"
-] %}
-  <input name="{{ field|lower|replace(' ', '_') }}" placeholder="{{ field }}" required>
-{% endfor %}
-
-<button type="submit">Run Prediction</button>
-</form>
-
+            <div class="text-center mt-5">
+                <button type="submit" class="btn btn-secondary btn-lg px-5 rounded-pill shadow">Run Oncology AI Model</button>
+            </div>
+        </form>
+    </div>
+</div>
 {% endblock %}
-

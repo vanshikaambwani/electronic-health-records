@@ -1,53 +1,78 @@
 {% extends "core/base.html" %}
 
-{% block title %}Edit Appointment{% endblock %}
+{% block title %}Clinical Encounter{% endblock %}
 
 {% block content %}
-    <div class="container my-5">
-        <div>
-            <h4 class="display-4 fw-bold">Edit Appointment for {{patient_name}}</h4>
-        </div>
-        
-        <form method="post" action="{{ url_for('edit_patient', patient_email=patient_email, patient_name=patient_name) }}">                            
-            <div class="col-md-8">
-                <label for="prescription" class="form-label fs-5">Prescription</label>
-                <textarea class="form-control mb-2" id="prescription" name="prescription" placeholder="Prescription" rows="4"></textarea>
-            </div>
-            <div class="col-md-2">
-                <label for="status" class="form-label fs-5">Status</label>
-                <select class="form-select mb-2" id="status" name="status">
-                    <option value="" disabled selected>Select a status</option>
-                    <option value="started">Started</option>
-                    <option value="inprogress">In Progress</option>
-                    <option value="completed">Completed</option>
-                </select>
-            </div>
-            <div class="col-md-8 d-flex justify-content-between">
-                <button type="submit" class="btn btn-primary btn-lg">Submit</button>
-                <button type="button" class="btn btn-secondary btn-lg ms-2" id="backButton">Back</button>
-            </div>
-        </form>        
-
-        <div id="flash-messages">
-            {% for message in get_flashed_messages() %}
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center mb-4">
+                <a href="javascript:history.back()" class="btn btn-outline-secondary rounded-circle me-3"><i class="bi bi-arrow-left"></i></a>
+                <div>
+                    <h6 class="text-uppercase text-muted fw-bold small mb-0">Encounter Record</h6>
+                    <h2 class="fw-bold m-0">Patient: {{ patient_name }}</h2>
                 </div>
-            {% endfor %}
+            </div>
+
+            <div class="card border-0 shadow-lg rounded-0">
+                <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"><i class="bi bi-journal-medical me-2"></i>Clinical Notes & Rx</span>
+                    <i class="bi bi-shield-lock-fill opacity-50"></i>
+                </div>
+                
+                <div class="card-body p-4 p-lg-5 bg-white">
+                    <form method="post" action="{{ url_for('edit_patient', patient_email=patient_email, patient_name=patient_name) }}">
+                        
+                        <div class="mb-4">
+                            <label for="prescription" class="form-label fw-bold text-uppercase small text-muted">Prescription / Diagnosis / Notes</label>
+                            <div class="form-floating">
+                                <textarea class="form-control bg-light border-0" id="prescription" name="prescription" placeholder="Rx" style="height: 200px; font-family: 'Courier New', monospace; font-size: 1.1rem; line-height: 1.6;"></textarea>
+                                <label for="prescription">Enter clinical details here...</label>
+                            </div>
+                        </div>
+
+                        <div class="row align-items-end">
+                            <div class="col-md-6 mb-3 mb-md-0">
+                                <label for="status" class="form-label fw-bold text-uppercase small text-muted">Encounter Status</label>
+                                <select class="form-select form-select-lg border-secondary" id="status" name="status">
+                                    <option value="" disabled selected>Update Status...</option>
+                                    <option value="started">Requested (Started)</option>
+                                    <option value="inprogress">In Progress / Confirmed</option>
+                                    <option value="completed">Completed (Finalize)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <button type="submit" class="btn btn-primary btn-lg px-5 rounded-0 shadow-sm w-100">
+                                    <i class="bi bi-save me-2"></i>Save Record
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div id="flash-messages" class="mt-3">
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-success alert-dismissible fade show border-0 shadow-sm" role="alert">
+                        <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
-    <script>
-        // Auto-close flash messages after 5 seconds
-        setTimeout(function() {
-            $('#flash-messages .alert').alert('close');
-        }, 5000);
-    </script>
-    <script>
-        document.getElementById('backButton').addEventListener('click', function() {
-            window.history.back();
+</div>
+
+<script>
+    setTimeout(function() {
+        var alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            new bootstrap.Alert(alert).close();
         });
-    </script>
+    }, 5000);
+    
+    document.getElementById('backButton')?.addEventListener('click', function() {
+        window.history.back();
+    });
+</script>
 {% endblock %}

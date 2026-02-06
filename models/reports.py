@@ -13,9 +13,9 @@ class ReportFile:
         self.conn.commit()
 
     def get_id(self):
-        self.cur.execute('SELECT MAX(report_id) FROM report;')
+        self.cur.execute('SELECT MAX(CAST(report_id AS INTEGER)) FROM report;')
         result = self.cur.fetchone()[0]
-        return str(int(result)+1) if result else 1
+        return str(int(result) + 1) if result else "1"
 
     def create(self, patient_email, doctor_email, report_name, file_path):
         report_id = self.get_id()

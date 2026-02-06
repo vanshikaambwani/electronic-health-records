@@ -1,81 +1,72 @@
 {% extends "core/base.html" %}
-
-{% block title %}Report{% endblock %}
-
+{% block title %}Medical Records{% endblock %}
 
 {% block content %}
-    <div class="container my-5">
-        <!-- Report Upload Section -->
-        <div>
-            <h1 class="display-4 fw-bold">Upload Report</h1>
-        </div>
-        <div class="report-upload-section">
-            <form action="{{ url_for('upload_reports') }}" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label for="reportName" class="form-label">Report Name:</label>
-                    <input type="text" class="form-control" id="reportName" name="report_name" required>
-                </div>
-                <div class="mb-3">
-                    <label for="reportFile" class="form-label">Upload Report File (in pdf, jpg, jpeg):</label>
-                    <input type="file" class="form-control" id="reportFile" name="file" accept=".pdf, .jpg, .jpeg" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Upload</button>
-            </form>
-        </div>
-        
-        <div id="flash-messages">
-            {% for message in get_flashed_messages() %}
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-            {% endfor %}
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-5">
+            <div class="glass-card h-100">
+                <h3 class="fw-bold mb-4">Upload New Report</h3>
+                <form action="{{ url_for('upload_reports') }}" method="post" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Report Title</label>
+                        <input type="text" class="form-control" name="report_name" placeholder="e.g. Blood Test Q1" required>
+                    </div>
+                    
+                    <div class="mb-4 p-4 border-2 border-dashed rounded-3 text-center bg-light" style="border-style: dashed; border-color: #cbd5e1;">
+                        <i class="bi bi-cloud-arrow-up display-4 text-muted mb-3"></i>
+                        <label for="reportFile" class="form-label d-block text-primary fw-bold" style="cursor: pointer;">Select File to Upload</label>
+                        <input type="file" class="form-control d-none" id="reportFile" name="file" accept=".pdf, .jpg, .jpeg" required onchange="this.previousElementSibling.innerText = this.files[0].name">
+                        <small class="text-muted d-block mt-2">Supports PDF, JPG, JPEG</small>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2">Secure Upload</button>
+                </form>
+            </div>
         </div>
 
-        <!-- Previous Uploads Section -->
-        <div class="mt-4">
-            <h1 class="display-4 fw-bold">Previous Uploads</h1>
-        </div>
-        <div class="previous-uploads-section">
-            {% if files %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Report Name</th>
-                            <th>Action</th>
-                            <th>Remove</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for file in files %}
+        <div class="col-lg-7">
+            <div class="glass-card h-100">
+                <h3 class="fw-bold mb-4">Document History</h3>
+                {% if files %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="bg-light">
                             <tr>
-                                <td>{{ file.report_name }}</td>
-                                <td>
-                                    <a href="{{ url_for('serve_report', file_path=file.file_path) }}" class="btn btn-primary btn-sm">View Report</a>
+                                <th class="ps-3 rounded-start">Document Name</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for file in files %}
+                            <tr>
+                                <td class="ps-3">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark-text text-secondary fs-4 me-3"></i>
+                                        <span class="fw-medium">{{ file.report_name }}</span>
+                                    </div>
                                 </td>
                                 <td>
-                                    <form action="{{ url_for('delete_report', report_name=file.report_name) }}" method="post">
-                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                    </form>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ url_for('serve_report', file_path=file.file_path) }}" class="btn btn-sm btn-outline-primary" target="_blank">View</a>
+                                        <form action="{{ url_for('delete_report', report_name=file.report_name) }}" method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No previous uploads available.</p>
-            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-folder2-open fs-1 d-block mb-2"></i>
+                    <p>No documents uploaded yet.</p>
+                </div>
+                {% endif %}
+            </div>
         </div>
-
     </div>
-
-    <script>
-        // Auto-close flash messages after 5 seconds
-        setTimeout(function() {
-            $('#flash-messages .alert').alert('close');
-        }, 5000);
-    </script>
-
+</div>
 {% endblock %}

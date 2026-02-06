@@ -1,34 +1,48 @@
 {% extends "core/base.html" %}
 {% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 glass-card">
+            <div class="d-flex align-items-center mb-4 text-warning">
+                <i class="bi bi-activity fs-2 me-3"></i>
+                <h2 class="fw-bold m-0 text-dark">Parkinson’s Detection</h2>
+            </div>
+            
+            <form method="POST" class="row g-3">
+                <div class="col-12"><h5 class="text-muted border-bottom pb-2 mb-3">Vocal Fundamental Frequencies</h5></div>
+                <div class="col-md-4"><label class="small fw-bold text-muted">Fo (Hz)</label><input name="fo" class="form-control" required></div>
+                <div class="col-md-4"><label class="small fw-bold text-muted">Fhi (Hz)</label><input name="fhi" class="form-control" required></div>
+                <div class="col-md-4"><label class="small fw-bold text-muted">Flo (Hz)</label><input name="flo" class="form-control" required></div>
 
-<h2>Parkinson’s Disease Prediction</h2>
+                <div class="col-12 mt-4"><h5 class="text-muted border-bottom pb-2 mb-3">Variation Measures</h5></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">Jitter (%)</label><input name="jitter_pct" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">Jitter (Abs)</label><input name="jitter_abs" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">RAP</label><input name="rap" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">PPQ</label><input name="ppq" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">DDP</label><input name="ddp" class="form-control" required></div>
+                
+                <div class="col-md-3"><label class="small fw-bold text-muted">Shimmer</label><input name="shimmer" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">Shimmer (dB)</label><input name="shimmer_db" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">APQ3</label><input name="apq3" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">APQ5</label><input name="apq5" class="form-control" required></div>
+                
+                <div class="col-12 mt-4"><h5 class="text-muted border-bottom pb-2 mb-3">Nonlinear Measures</h5></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">APQ</label><input name="apq" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">DDA</label><input name="dda" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">NHR</label><input name="nhr" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">HNR</label><input name="hnr" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">RPDE</label><input name="rpde" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">DFA</label><input name="dfa" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">Spread1</label><input name="spread1" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">Spread2</label><input name="spread2" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">D2</label><input name="d2" class="form-control" required></div>
+                <div class="col-md-3"><label class="small fw-bold text-muted">PPE</label><input name="ppe" class="form-control" required></div>
 
-<form method="POST">
-  <input name="fo" placeholder="Fo (Hz)" required>
-  <input name="fhi" placeholder="Fhi (Hz)" required>
-  <input name="flo" placeholder="Flo (Hz)" required>
-  <input name="jitter_pct" placeholder="Jitter (%)" required>
-  <input name="jitter_abs" placeholder="Jitter (Abs)" required>
-  <input name="rap" placeholder="RAP" required>
-  <input name="ppq" placeholder="PPQ" required>
-  <input name="ddp" placeholder="DDP" required>
-  <input name="shimmer" placeholder="Shimmer" required>
-  <input name="shimmer_db" placeholder="Shimmer (dB)" required>
-  <input name="apq3" placeholder="APQ3" required>
-  <input name="apq5" placeholder="APQ5" required>
-  <input name="apq" placeholder="APQ" required>
-  <input name="dda" placeholder="DDA" required>
-  <input name="nhr" placeholder="NHR" required>
-  <input name="hnr" placeholder="HNR" required>
-  <input name="rpde" placeholder="RPDE" required>
-  <input name="dfa" placeholder="DFA" required>
-  <input name="spread1" placeholder="Spread1" required>
-  <input name="spread2" placeholder="Spread2" required>
-  <input name="d2" placeholder="D2" required>
-  <input name="ppe" placeholder="PPE" required>
-
-  <button type="submit">Run Prediction</button>
-</form>
-
+                <div class="col-12 mt-4 text-center">
+                    <button type="submit" class="btn btn-warning text-dark btn-lg px-5 rounded-pill shadow">Run Neural Analysis</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
-

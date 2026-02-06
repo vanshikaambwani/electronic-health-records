@@ -1,62 +1,45 @@
 {% extends "core/base_minimal.html" %}
-
-{% block title %}{{ title }}{% endblock %}
-
 {% block main_content %}
-    <div class="container-fluid flex-grow-1">
-        <div class="row h-100">
-            <!-- Right panel -->
-            <div class="col-md-6 order-md-2 d-flex flex-column justify-content-center align-items-center bg-primary text-light text-left" style="min-height: 100vh; height: 100%;">
-                <h1 class="fw-bold display-4">LibreHealth EHR</h1>
-                <div class="lead fs-3 font-monospace mt-4 col-8">
-                    <p>The Patient Tracker is a web-based application designed to streamline the management of patient information and medical records. Both patient and doctor can use this portal.</p>
-                </div>
-                <!-- Footer-->
-                <div class="align-self-end w-100">
-                    {% include 'core/footer.html' %}
+<div class="container-fluid p-0 overflow-hidden">
+    <div class="row g-0 vh-100">
+        <div class="col-lg-7 d-none d-lg-flex flex-column justify-content-center p-5 text-white" 
+             style="background: linear-gradient(rgba(13, 110, 253, 0.8), rgba(16, 185, 129, 0.8)), url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80'); background-size: cover; background-position: center;">
+            <div class="p-5">
+                <h1 class="display-3 fw-bold mb-4">LibreHealth EHR</h1>
+                <p class="fs-4 opacity-90 leading-relaxed mb-5">Digital precision meets compassionate care. Access your health records and manage appointments with world-class security.</p>
+                <div class="d-flex gap-4">
+                    <div class="text-center"><h4 class="fw-bold m-0">10k+</h4><small>Patients</small></div>
+                    <div class="vr"></div>
+                    <div class="text-center"><h4 class="fw-bold m-0">500+</h4><small>Specialists</small></div>
                 </div>
             </div>
+        </div>
 
-            <!-- Left panel - Login Form -->
-            <div class="col-md-6 order-md-1 d-flex flex-column justify-content-center align-items-center p-4" style="min-height: 100vh; height: 100%;">
-                <h2 class="text-center display-3 fw-bold pb-3">Login</h2>
-                {% if message %}
-                <p class="text-danger">{{ message }}</p>
-                {% endif %}
-                <form class="w-50" action="/login" method="post">
-                    <div class="form-group mb-3">
-                        <input type="email" name="email" class="form-control form-control-lg" id="email" placeholder="Email", value="{{ email }}">
+        <div class="col-lg-5 d-flex align-items-center justify-content-center bg-white">
+            <div class="w-75 p-4">
+                <div class="mb-5">
+                    <h2 class="fw-bold">Welcome Back</h2>
+                    <p class="text-muted">Please enter your credentials to continue.</p>
+                </div>
+
+                <form action="/login" method="post">
+                    <div class="form-floating mb-3">
+                        <input type="email" name="email" class="form-control rounded-3" id="email" placeholder="name@example.com" value="{{ email }}">
+                        <label for="email">Email address</label>
                     </div>
-                    <div class="form-group mb-3">
-                        <input type="password" name="password" class="form-control form-control-lg" id="password" placeholder="Password">
+                    <div class="form-floating mb-4">
+                        <input type="password" name="password" class="form-control rounded-3" id="password" placeholder="Password">
+                        <label for="password">Password</label>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <button type="submit" value="Login" class="btn btn-primary btn-lg">Login</button>
-                        <button type="button" onclick="window.location.href='/register'" class="btn btn-secondary btn-lg ms-2">Register</button>
-                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-3 mb-3">Sign In</button>
+                    <button type="button" onclick="window.location.href='/register'" class="btn btn-outline-secondary w-100 py-3">Create New Account</button>
                 </form>
-                <p class="text-muted pt-4 text-center">Please Login or Register as New User.</p>
-                <!-- {% if error %}
-                    <p class="error"><strong>Error:</strong> {{ error }}
-                {% endif %} -->
-                {% if error %}
-                    <!-- Display the error using a popup box -->
-                    <div class="error-popup" style="font-size: 22px;">
-                        <strong>Error:</strong> {{ error }}
-                    </div>
-                    <script>
-                        document.addEventListener('DOMContentLoaded', function () {
-                            // Show the error-popup div after a delay
-                            var errorPopup = document.querySelector('.error-popup');
-                            if (errorPopup) {
-                                setTimeout(function () {
-                                    errorPopup.style.display = 'none';
-                                }, 5000); // Adjust the delay in milliseconds (e.g., 5000 for 5 seconds)
-                            }
-                        });
-                    </script>
-                {% endif %}
+                
+                <footer class="mt-5 text-center text-muted small">
+                    © 2026 LibreHealth EHR. Security Verified.
+                </footer>
             </div>
         </div>
     </div>
+</div>
 {% endblock %}

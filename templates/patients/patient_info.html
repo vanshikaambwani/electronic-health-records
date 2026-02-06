@@ -1,78 +1,57 @@
 {% extends "core/base.html" %}
-
-{% block title %}Patient Information{% endblock %}
-
 {% block content %}
-    <div class="container my-5">
-        <div>
-            <h1 class="display-4 fw-bold">Patient Information</h1>
-        </div>
-
-        <div>
-            <table class="table">
-                <tbody>
-                    <tr>
-                        <th scope="row">Patient Name</th>
-                        <td>{{ patient_info.name }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Age</th>
-                        <td>{{ patient_info.age }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Gender</th>
-                        <td>{{ patient_info.gender }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Height</th>
-                        <td>{{ patient_info.height }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Weight</th>
-                        <td>{{ patient_info.weight }}</td>
-                    </tr>
-                    <tr>
-                        <th scope="row">Medical History</th>
-                        <td>{{ patient_info.medical_history }}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Past Reports Section -->
-        <div class="my-4">
-            <h2 class="fw-bold">Past Reports</h2>
-            {% if patient_reports %}
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Report Name</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for report in patient_reports %}
-                            <tr>
-                                <td>{{ report.report_name }}</td>
-                                <td>
-                                    <a href="{{ url_for('serve_report', file_path=report.file_path) }}" class="btn btn-primary btn-sm">View Report</a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% else %}
-                <p>No past reports available.</p>
-            {% endif %}
-        </div>
-
-        <div class="col-auto">
-            <button class="btn btn-secondary" id="backButton">Back</button>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 glass-card">
+            <h1 class="fw-bold mb-4 text-primary">Patient Registration</h1>
+            <p class="text-muted mb-5">Join LibreHealth to manage your medical records digitally.</p>
+            
+            <form method="post" class="row g-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Full Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="John Doe" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="john@example.com" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Password</label>
+                    <input type="password" name="password" class="form-control" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Age</label>
+                    <select name="age" class="form-select" required>
+                        {% for i in range(1, 121) %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Gender</label>
+                    <select name="gender" class="form-select" required>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Height (cm)</label>
+                    <input type="text" name="height" class="form-control" placeholder="175" required>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold">Weight (lbs)</label>
+                    <input type="text" name="weight" class="form-control" placeholder="160" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label fw-semibold">Medical History</label>
+                    <textarea name="medical_history" class="form-control" rows="3" placeholder="List any chronic conditions or allergies..." required></textarea>
+                </div>
+                
+                <div class="col-12 d-flex gap-3 pt-4">
+                    <button type="submit" class="btn btn-primary px-5 py-3">Register Account</button>
+                    <a href="{{ url_for('index') }}" class="btn btn-light px-5 py-3 border">Back to Login</a>
+                </div>
+            </form>
         </div>
     </div>
-    <script>
-        document.getElementById('backButton').addEventListener('click', function() {
-            window.history.back();
-        });
-    </script>
+</div>
 {% endblock %}

@@ -1,15 +1,50 @@
 {% extends "core/base.html" %}
 {% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card text-center mb-4 border-top border-5 {% if result == 1 %}border-danger{% else %}border-success{% endif %}">
+                <h2 class="fw-bold mb-3">Diabetes Analysis Result</h2>
+                
+                {% if result == 1 %}
+                    <div class="display-1 text-danger mb-3"><i class="bi bi-exclamation-triangle-fill"></i></div>
+                    <h3 class="text-danger fw-bold">High Risk Detected</h3>
+                    <p class="text-muted px-lg-5">Our AI model has detected indicators strongly associated with Diabetes. We recommend scheduling an HbA1c test with a specialist.</p>
+                {% else %}
+                    <div class="display-1 text-success mb-3"><i class="bi bi-shield-check"></i></div>
+                    <h3 class="text-success fw-bold">Low Risk Detected</h3>
+                    <p class="text-muted">Your metrics are within a healthy range. No significant risk factors for Diabetes were found.</p>
+                {% endif %}
+            </div>
 
-<h2>Prediction Result</h2>
+            {% if doctors %}
+            <div class="glass-card">
+                <h4 class="fw-bold mb-4 text-primary">Recommended Diabetologists</h4>
+                <div class="list-group list-group-flush">
+                    {% for doctor in doctors %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3 bg-transparent">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-light rounded-circle p-2 me-3"><i class="bi bi-person-fill text-muted"></i></div>
+                            <div>
+                                <h6 class="fw-bold mb-0">Dr. {{ doctor.name }}</h6>
+                                <small class="text-muted">{{ doctor.specialization }} • {{ doctor.experience }} Years Exp</small>
+                            </div>
+                        </div>
+                        <a href="{{ url_for('book_doctor', doctor_email=doctor.email, doctor_name=doctor.name) }}" class="btn btn-sm btn-primary px-4 rounded-pill">Book Now</a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-light border text-center text-muted" role="alert">
+                <i class="bi bi-info-circle me-2"></i>No Diabetologists are currently available for immediate booking.
+            </div>
+            {% endif %}
 
-{% if result == 1 %}
-  <p style="color:red;">⚠ High risk of Diabetes detected.</p>
-{% else %}
-  <p style="color:green;">✅ No Diabetes detected.</p>
-{% endif %}
-
-<a href="{{ url_for('patient_dashboard') }}">Back to Dashboard</a>
-
+            <div class="text-center mt-4">
+                <a href="{{ url_for('patient_dashboard') }}" class="btn btn-link text-decoration-none text-muted">← Return to Dashboard</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
-

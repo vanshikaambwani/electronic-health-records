@@ -1,74 +1,52 @@
 {% extends "core/base.html" %}
-
-{% block title %}Book Appointments{% endblock %}
-
+{% block title %}Find a Doctor{% endblock %}
 
 {% block content %}
-    <div class="container my-5">
-        <div>
-            <h1 class="display-4 fw-bold">Search Doctor</h1>
-        </div>
-
-        <form method="post" action="{{ url_for('book_appointment') }}">
-            <div class="form-row align-items-center">
-                <div class="col-md-8">
-                    <label for="first_name" class="sr-only">First Name</label>
-                    <input type="text" class="form-control mb-2" id="first_name" name="first_name" placeholder="First Name">
-                </div>
-                <div class="col-md-8">
-                    <label for="last_name" class="sr-only">Last Name</label>
-                    <input type="text" class="form-control mb-2" id="last_name" name="last_name" placeholder="Last Name">
-                </div>
-                <div class="col-md-8">
-                    <label for="specialization" class="sr-only">Specialization</label>
-                    <input type="text" class="form-control mb-2" id="specialization" name="specialization" placeholder="Specialization">
-                </div>
-                <div class="col-md-8">
-                    <button type="submit" class="btn btn-primary mb-2">Search</button>
-                </div>
+<div class="container py-5">
+    <div class="glass-card mb-5 text-center py-5 bg-white">
+        <h1 class="display-5 fw-bold text-primary mb-3">Find Your Specialist</h1>
+        <p class="text-muted mb-4">Search by name or specialization to book your next visit.</p>
+        
+        <form method="post" action="{{ url_for('book_appointment') }}" class="row justify-content-center g-2">
+            <div class="col-md-3">
+                <input type="text" class="form-control form-control-lg" name="first_name" placeholder="First Name">
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control form-control-lg" name="last_name" placeholder="Last Name">
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control form-control-lg" name="specialization" placeholder="Specialization (e.g. Cardiology)">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary btn-lg w-100"><i class="bi bi-search"></i> Search</button>
             </div>
         </form>
+    </div>
 
-        {% if doctors %}
-            <!-- Display search results with book buttons inside a box -->
-            <div class="table-container-box">
-                <div class="table-container">
-                    <button class="close-btn" onclick="closeTable()">X</button>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Doctor Name</th>
-                                <th>Email</th>
-                                <th>Specialization</th>
-                                <th>Years of Experience</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for doctor in doctors %}
-                                <tr>
-                                    <td>{{ doctor.name }}</td>
-                                    <td>{{ doctor.email }}</td>
-                                    <td>{{ doctor.specialization }}</td>
-                                    <td>{{ doctor.experience }}</td>
-                                    <td>
-                                        <a href="{{ url_for('book_doctor', doctor_email=doctor.email, doctor_name=doctor.name) }}" class="btn btn-primary">Book</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+    {% if doctors %}
+    <div class="row g-4">
+        <div class="col-12"><h4 class="fw-bold text-secondary">Search Results</h4></div>
+        {% for doctor in doctors %}
+        <div class="col-md-6 col-lg-4">
+            <div class="glass-card h-100 p-4 position-relative hover-lift">
+                <div class="d-flex align-items-start mb-3">
+                    <div class="bg-primary-soft text-primary rounded-circle p-3 me-3" style="background: rgba(13, 110, 253, 0.1);">
+                        <i class="bi bi-person-lines-fill fs-3"></i>
+                    </div>
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ doctor.name }}</h5>
+                        <p class="text-primary small fw-bold mb-0 text-uppercase">{{ doctor.specialization }}</p>
+                        <small class="text-muted">{{ doctor.experience }} Years Experience</small>
+                    </div>
+                </div>
+                <div class="border-top pt-3 mt-3">
+                    <small class="text-muted d-block mb-3"><i class="bi bi-envelope me-2"></i>{{ doctor.email }}</small>
+                    <a href="{{ url_for('book_doctor', doctor_email=doctor.email, doctor_name=doctor.name) }}" class="btn btn-primary w-100 rounded-pill">Book Appointment</a>
                 </div>
             </div>
-            <script>
-                function closeTable() {
-                    // Add JavaScript logic to close or hide the table
-                    document.querySelector('.table-container-box').style.display = 'none';
-                }
-            </script>
-        {% endif %}
-        
+        </div>
+        {% endfor %}
     </div>
+    {% endif %}
+</div>
 {% endblock %}
-
-
