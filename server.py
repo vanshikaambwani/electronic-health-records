@@ -118,6 +118,8 @@ def logout():
     session.pop('user_type', None)
     return redirect(url_for('index'))
 
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """
@@ -136,6 +138,7 @@ def register():
 
 
 # # --------------------------------- Patient Components -------------------------------------------
+
 
 
 @app.route('/patient-dashboard')
@@ -240,17 +243,49 @@ def parkinsons_prediction():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        features = [
-            float(request.form[name]) for name in [
- "Fo(Hz)", "Fhi(Hz)", "Flo(Hz)", "Jitter(%)", "Jitter(Abs)",
- "RAP", "PPQ", "DDP", "Shimmer", "Shimmer(dB)",
- "APQ3", "APQ5", "APQ", "DDA", "NHR",
- "HNR", "RPDE", "DFA", "Spread1", "Spread2",
- "D2", "PPE"
-]
-        ]
+        try:
+            fields = [
+                "fo",
+                "fhi",
+                "flo",
+                "jitter_pct",
+                "jitter_abs",
+                "rap",
+                "ppq",
+                "ddp",
+                "shimmer",
+                "shimmer_db",
+                "apq3",
+                "apq5",
+                "apq",
+                "dda",
+                "nhr",
+                "hnr",
+                "rpde",
+                "dfa",
+                "spread1",
+                "spread2",
+                "d2",
+                "ppe"
+            ]
 
-        result = predict_parkinsons(features)
+            features = []
+
+            for f in fields:
+                value = request.form.get(f)
+
+                if value is None or value == "":
+                    raise ValueError(f"Missing value for field: {f}")
+
+                features.append(float(value))
+
+            result = predict_parkinsons(features)
+
+        except ValueError as e:
+            return render_template(
+                'patients/parkinsons_form.html',
+                error=str(e)
+            )
 
         # Get doctors who specialize in Neurology
         doctors = Doctor().get_doctors_by_specialization('Neurology')
